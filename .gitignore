@@ -10,4 +10,6 @@ dist/
 /hcar.aux
 /hcar.dvi
 /hcar.log
-/hcar.sty
+/hcar-master.aux
+/hcar-master.dvi
+/hcar-master.log
