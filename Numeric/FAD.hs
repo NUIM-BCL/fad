@@ -73,6 +73,9 @@ module Numeric.FAD (
             -- * Common access patterns
             diff, diff2, diffs, diffs0, grad, jacobian,
 
+            -- * building blocks for custom access patterns
+            fromTower, toTower, tangent,
+
             -- * Optimization Routines
             zeroNewton, inverseNewton, fixedPointNewton, extremumNewton,
             argminNaiveGradient,
