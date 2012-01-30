@@ -379,12 +379,16 @@ instance Floating a => Floating (Tower tag a) where
     exp		= liftA1_ exp const
     sqrt	= liftA1_ sqrt (const . recip . (2*))
     log		= liftA1 log recip
-    -- Bug on zero base, e.g., diffUU (**2) 0 = NaN, which is wrong.
-    -- Need special cases to bypass avoidable division by 0 and log 0.
-    -- Here are some untested ideas:
-    --  (**) x (Tower []) = 1
-    --  (**) x y@(Tower [y0]) = liftA1 (**y0) ((y*) . (**(y-1))) x
-    (**)	= liftA2_ (**) (\z x y -> (y*z/x, z*log x))
+    -- The default case has a problem when the base is zero, e.g.,
+    --  diffUU (**2) 0 = NaN
+    -- which is wrong.
+    -- Special cases are needed to bypass avoidable division by 0 and log 0.
+    -- This is handled in two parts: first we deal with a constant zero exponent,
+    -- then we deal with all other constant exponents.
+    (**) x (Tower []) = 1
+    (**) x (Tower [0]) = 1
+    (**) x y@(Tower [y0]) = liftA1 (**y0) ((y*) . (**(y-1))) x
+    (**) x y	= liftA2_ (**) (\z x y -> (y*z/x, z*log x)) x y
     sin		= liftA1 sin cos
     cos		= liftA1 cos (negate . sin)
     tan         = liftA1 tan (recip . (^2) . cos)
